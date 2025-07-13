@@ -1,0 +1,11 @@
+.description {
+	overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+	width: 50%;
+}
+
+.link {
+	text-decoration: none;
+	color: currentColor;
+} 

@@ -1,6 +1,8 @@
-import { createBrowserRouter} from 'react-router-dom';
+import { createBrowserRouter } from 'react-router-dom'
 
-import { TaskPage } from '../../pages/tasksPage/TaskPage';
+import { TaskPage } from '../../pages/tasksPage/TaskPage'
+
+import { TaskDetails } from '../../widgets/taskDetails/TaskDetails'
 
 export const router = createBrowserRouter([
 	{
@@ -9,7 +11,7 @@ export const router = createBrowserRouter([
 	},
 
 	{
-		path: '/task/:id',
-		element: <div>TaskID</div>
+		path: 'task/:id',
+		element: <TaskDetails />,
 	},
 ])
