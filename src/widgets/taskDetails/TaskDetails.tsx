@@ -16,11 +16,17 @@ import {
 } from '@mui/material';
 import EditIcon from '@mui/icons-material/Edit';
 import { useNavigate, useParams } from 'react-router-dom';
+import { useImmer } from 'use-immer';
 
-// Типы
-type Status = 'To Do' | 'In Progress' | 'Done';
-type Priority = 'Low' | 'Medium' | 'High';
-type Category = 'Bug' | 'Feature' | 'Documentation' | 'Refactor' | 'Test';
+
+import { colorMap } from '../../shared/constants/colorMap';
+import { useTaskStore } from '../../store/useTasksStore'
+import { ITask } from '../../shared/types/types'
+
+
+type Status = ITask['status'];
+type Priority = ITask['priority'];
+type Category = ITask['category'];
 type FieldType = 'status' | 'priority' | 'category';
 
 const style = {
@@ -40,25 +46,6 @@ const options: Record<FieldType, string[]> = {
   category: ['Bug', 'Feature', 'Documentation', 'Refactor', 'Test'],
 };
 
-const colorMap = {
-  status: {
-    'To Do': 'default',
-    'In Progress': 'info',
-    Done: 'success',
-  },
-  priority: {
-    Low: 'default',
-    Medium: 'warning',
-    High: 'error',
-  },
-  category: {
-    Bug: 'error',
-    Feature: 'success',
-    Documentation: 'primary',
-    Refactor: 'warning',
-    Test: 'info',
-  },
-} as const;
 
 type ColorMap = typeof colorMap;
 
@@ -106,21 +93,50 @@ const ChildModal = ({
   </Modal>
 );
 
-export const TaskDetails = () => {
-  const navigate = useNavigate();
-  const { id } = useParams();
 
-  const [title, setTitle] = useState('Название задачи');
-  const [description, setDescription] = useState('Описание задачи...');
-  const [status, setStatus] = useState<Status>('In Progress');
-  const [priority, setPriority] = useState<Priority>('High');
-  const [category, setCategory] = useState<Category>('Bug');
+
+export const TaskDetails = () => {
+  const getTaskById = useTaskStore(state => state.getTaskById)
+  const updateTask = useTaskStore(state => state.updateTask)
+  const navigate = useNavigate()
+  const { id } = useParams()
+
+  const [taskDetails, updateTaskDetails] = useImmer<Omit<ITask, 'id'>>({
+    title: '',
+    description: '',
+    status: '',
+    priority: '',
+    category: ''
+  })
 
   const [editTitle, setEditTitle] = useState(false);
   const [editDescription, setEditDescription] = useState(false);
   const [openChildModal, setOpenChildModal] = useState<null | FieldType>(null);
 
+  React.useEffect(() => {
+    if(!id) return
+    const task = getTaskById(+id)
+    if(!task) return
+    updateTaskDetails((draft) => {
+      draft.title = task.title
+      draft.category = task.category
+      draft.priority = task.priority
+      draft.status = task.status
+      draft.description = task.description
+    })
+  }, [])
+
   const handleClose = () => navigate(-1);
+
+  const handleEdit = () => {
+    if(!id) return
+    const newTask = {
+      id: +id,
+      ...taskDetails
+    }
+    updateTask(newTask)
+    handleClose()
+  }
 
   return (
     <>
@@ -128,15 +144,15 @@ export const TaskDetails = () => {
         <DialogTitle>
           {editTitle ? (
             <TextField
-              value={title}
-              onChange={(e) => setTitle(e.target.value)}
+              value={taskDetails.title}
+              onChange={(e) => updateTaskDetails(draft => {draft.title = e.target.value})}
               onBlur={() => setEditTitle(false)}
               fullWidth
               autoFocus
             />
           ) : (
-            <Typography variant="h6" onClick={() => setEditTitle(true)} sx={{ cursor: 'pointer' }}>
-              {title}
+            <Typography variant="h6" component = 'p' onClick={() => setEditTitle(true)} sx={{ cursor: 'pointer' }}>
+              {taskDetails.title}
             </Typography>
           )}
         </DialogTitle>
@@ -144,20 +160,20 @@ export const TaskDetails = () => {
         <DialogContent>
           <Stack direction="row" spacing={1} mb={2}>
             <Chip
-              label={`Статус: ${status}`}
-              color={colorMap.status[status]}
+              label={`Статус: ${taskDetails.status}`}
+              color={colorMap.status[taskDetails.status || 'To Do']}
               onClick={() => setOpenChildModal('status')}
               sx={{ cursor: 'pointer' }}
             />
             <Chip
-              label={`Приоритет: ${priority}`}
-              color={colorMap.priority[priority]}
+              label={`Приоритет: ${taskDetails.priority}`}
+              color={taskDetails.priority ? colorMap.priority[taskDetails.priority] : undefined}
               onClick={() => setOpenChildModal('priority')}
               sx={{ cursor: 'pointer' }}
             />
             <Chip
-              label={`Категория: ${category}`}
-              color={colorMap.category[category]}
+              label={`Категория: ${taskDetails.category}`}
+              color={taskDetails.category ? colorMap.category[taskDetails.category] : undefined}
               onClick={() => setOpenChildModal('category')}
               sx={{ cursor: 'pointer' }}
             />
@@ -166,8 +182,8 @@ export const TaskDetails = () => {
           <Box display="flex" alignItems="flex-start" justifyContent="space-between">
             {editDescription ? (
               <TextField
-                value={description}
-                onChange={(e) => setDescription(e.target.value)}
+                value={taskDetails.description}
+                onChange={(e) => updateTaskDetails(draft => {draft.description = e.target.value})}
                 onBlur={() => setEditDescription(false)}
                 fullWidth
                 multiline
@@ -176,7 +192,7 @@ export const TaskDetails = () => {
               />
             ) : (
               <DialogContentText sx={{ flex: 1 }}>
-                {description || 'Нет описания'}
+                {taskDetails.description || 'Добавьте описание'}
               </DialogContentText>
             )}
             {!editDescription && (
@@ -189,6 +205,7 @@ export const TaskDetails = () => {
 
         <DialogActions>
           <Button onClick={handleClose}>Закрыть</Button>
+          <Button onClick={handleEdit}>Изменить</Button>
         </DialogActions>
       </Dialog>
 
@@ -200,15 +217,19 @@ export const TaskDetails = () => {
           values={options[openChildModal]}
           selected={
             openChildModal === 'status'
-              ? status
+              ? taskDetails.status
               : openChildModal === 'priority'
-              ? priority
-              : category
+              ? taskDetails.priority
+              : taskDetails.category
           }
           onSelect={(val) => {
-            if (openChildModal === 'status') setStatus(val as Status);
-            else if (openChildModal === 'priority') setPriority(val as Priority);
-            else setCategory(val as Category);
+            if (openChildModal === 'status') updateTaskDetails(draft => {
+             draft.status = val as Status
+            })
+            else if (openChildModal === 'priority') updateTaskDetails(draft => {
+              draft.priority = val as Priority
+            })
+            else updateTaskDetails(draft => {draft.category = val as Category});
           }}
         />
       )}

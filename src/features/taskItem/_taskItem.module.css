@@ -4,3 +4,8 @@
   white-space: nowrap;
 	width: 50%;
 }
+
+.link {
+	text-decoration: none;
+	color: currentColor;
+} 
