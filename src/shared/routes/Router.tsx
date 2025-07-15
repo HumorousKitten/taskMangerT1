@@ -1,8 +1,8 @@
 import { createBrowserRouter } from 'react-router-dom'
 
-import { TaskPage } from '../../pages/tasksPage/TaskPage'
+import { TaskPage } from '@/pages/tasksPage/TaskPage'
 
-import { TaskDetails } from '../../widgets/taskDetails/TaskDetails'
+import { TaskDetails } from '@/widgets/taskDetails/TaskDetails'
 
 export const router = createBrowserRouter([
 	{

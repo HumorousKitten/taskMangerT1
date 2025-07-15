@@ -1,8 +1,9 @@
-import { create } from 'zustand';
-import { immer } from 'zustand/middleware/immer';
-
-import { ITask } from '../shared/types/types';
+import { create } from 'zustand'
+import { immer } from 'zustand/middleware/immer'
 import { persist } from 'zustand/middleware'
+
+import { ITask } from '@/shared/types/types'
+
 
 interface Filters {
   category: ITask['category'] | '';

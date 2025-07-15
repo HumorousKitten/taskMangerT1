@@ -1,14 +1,16 @@
+import React from 'react'
 import { FC } from 'react'
 
 import { Grid } from '@mui/material'
 
-import { AddTask } from '../../features/addTask/AddTask'
-import { TaskItem } from '../../features/taskItem/TaskItem'
+import { ITask } from '@/shared/types/types'
 
-import { useTaskStore } from '../../store/useTasksStore'
+import { AddTask } from '@/features/addTask/AddTask'
+import { TaskItem } from '@/features/taskItem/TaskItem'
 
-import React from 'react'
-import { ITask } from '../../shared/types/types'
+import { useTaskStore } from '@/store/useTasksStore'
+
+
 
 interface ITaskListProps {
 	filters: Pick<ITask, 'status' | 'category' | 'priority'>
