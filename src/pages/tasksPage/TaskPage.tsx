@@ -22,7 +22,7 @@ export const TaskPage = () => {
 
 	return (
 		<main>
-			<Container maxWidth='xl' sx={{ border: '1px solid red' }}>
+			<Container maxWidth='xl'>
 				<TasksFilter filters={filters} onChange={handleFilterChange}/>
 				<TaskList filters={filters}/>
 			</Container>
