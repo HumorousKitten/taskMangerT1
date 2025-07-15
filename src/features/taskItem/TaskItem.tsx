@@ -1,4 +1,7 @@
-import { Box, Chip, Stack } from '@mui/material'
+import { FC } from 'react'
+import { Link } from 'react-router-dom'
+
+import { Chip, Stack } from '@mui/material'
 import Card from '@mui/material/Card';
 import CardContent from '@mui/material/CardContent';
 import Typography from '@mui/material/Typography';
@@ -6,14 +9,14 @@ import Typography from '@mui/material/Typography';
 import DeleteIcon from '@mui/icons-material/Delete';
 import EditNoteIcon from '@mui/icons-material/EditNote';
 
-import { Link } from 'react-router-dom'
 
-import { ITask } from '../../shared/types/types';
+import { ITask } from '@/shared/types/types';
+import { colorMap } from '@/shared/constants/colorMap';
+
+import { useTaskStore } from '@/store/useTasksStore';
 
 import cl from './_taskItem.module.css'
-import { FC } from 'react'
-import { colorMap } from '../../shared/constants/colorMap'
-import { useTaskStore } from '../../store/useTasksStore'
+
 
 
 interface ITaskItem {

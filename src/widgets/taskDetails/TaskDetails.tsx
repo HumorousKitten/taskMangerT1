@@ -1,4 +1,8 @@
-import React, { useState } from 'react';
+import React, { useState } from 'react'
+import { useNavigate, useParams } from 'react-router-dom'
+
+import { useImmer } from 'use-immer'
+
 import {
   Dialog,
   DialogTitle,
@@ -14,14 +18,12 @@ import {
   Modal,
   DialogActions,
 } from '@mui/material';
-import EditIcon from '@mui/icons-material/Edit';
-import { useNavigate, useParams } from 'react-router-dom';
-import { useImmer } from 'use-immer';
+import EditIcon from '@mui/icons-material/Edit'
 
+import { colorMap } from '@/shared/constants/colorMap'
+import { ITask } from '@/shared/types/types'
 
-import { colorMap } from '../../shared/constants/colorMap';
-import { useTaskStore } from '../../store/useTasksStore'
-import { ITask } from '../../shared/types/types'
+import { useTaskStore } from '@/store/useTasksStore'
 
 
 type Status = ITask['status'];

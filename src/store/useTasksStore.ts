@@ -1,7 +1,9 @@
-import { create } from 'zustand';
-import { immer } from 'zustand/middleware/immer';
+import { create } from 'zustand'
+import { immer } from 'zustand/middleware/immer'
+import { persist } from 'zustand/middleware'
 
-import { ITask } from '../shared/types/types';
+import { ITask } from '@/shared/types/types'
+
 
 interface Filters {
   category: ITask['category'] | '';
@@ -19,44 +21,47 @@ interface IUseTaskStore {
 }
 
 export const useTaskStore = create<IUseTaskStore>()(
-	immer((set, get) => ({
-		tasks: [
-			{
-				id: 1,
-				title: 'NewTask',
-				status: 'To Do',
-				category: '',
-				priority: '',
-				description: ''
-			}
-		],
 
-		addTask: title => set(state => {
-			const newId = !state.tasks.length ? 1 : state.tasks[state.tasks.length - 1].id + 1
-			state.tasks.push({id: newId, title, status: 'To Do', category: '', priority: '', description: ''})
-		}),
+	persist(
 
-		getTaskById: id => get().tasks.find((item) => item.id === id),
+		immer((set, get) => ({
+			tasks: [],
 
-		updateTask: task => set(state => {
-			const oldTask = state.tasks.find((item) => item.id === task.id)
-			if(!oldTask) return
-			Object.assign(oldTask, task);
-		}),
+			addTask: title => set(state => {
+				const newId = !state.tasks.length ? 1 : state.tasks[state.tasks.length - 1].id + 1
+				state.tasks.push({id: newId, title, status: 'To Do', category: '', priority: '', description: ''})
+			}),
 
-		deleteTask: id => set(state => {
-			state.tasks = state.tasks.filter(item => item.id !== id)
-		}),
+			getTaskById: id => get().tasks.find((item) => item.id === id),
 
-		filterTasks: (filters: Filters): ITask[] => {
-      const allTasks = get().tasks;
-      return allTasks.filter(task => {
-        return (
-          (filters.category === '' || task.category === filters.category) &&
-          (filters.priority === '' || task.priority === filters.priority) &&
-          (filters.status === '' || task.status === filters.status)
-        );
-      });
-    },
-	}))
+			updateTask: task => set(state => {
+				const oldTask = state.tasks.find((item) => item.id === task.id)
+				if(!oldTask) return
+				Object.assign(oldTask, task);
+			}),
+
+			deleteTask: id => set(state => {
+				state.tasks = state.tasks.filter(item => item.id !== id)
+			}),
+
+			filterTasks: (filters: Filters): ITask[] => {
+				const allTasks = get().tasks;
+
+				return allTasks.filter(task => {
+					return (
+						(filters.category === '' || task.category === filters.category) &&
+						(filters.priority === '' || task.priority === filters.priority) &&
+						(filters.status === '' || task.status === filters.status)
+					);
+				});
+
+			},
+
+		})), 
+	
+	{
+		name: 'tasksData',
+		partialize: (state) => ({tasks: state.tasks})
+	})
+
 )
