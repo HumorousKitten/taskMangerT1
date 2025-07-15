@@ -1,6 +1,6 @@
 import React, { FC } from 'react'
 
-import { Box, Stack, TextField } from '@mui/material'
+import { Stack, TextField } from '@mui/material'
 
 import { CustomButton } from '@/shared/UI/button/Button'
 import { PlusIcon } from '@/shared/icons/plusIcon/PlusIcon'
