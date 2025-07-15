@@ -1,6 +1,8 @@
-import Button  from '@mui/material/Button';
-import clsx from 'clsx';
 import type { FC } from 'react'
+
+import Button  from '@mui/material/Button';
+
+import clsx from 'clsx';
 
 
 interface IButton {

@@ -1,11 +1,13 @@
-import { Box, Stack, TextField } from '@mui/material'
 import React, { FC } from 'react'
 
-import { CustomButton } from '../../shared/UI/button/Button'
-import { PlusIcon } from '../../shared/icons/plusIcon/PlusIcon'
+import { Box, Stack, TextField } from '@mui/material'
+
+import { CustomButton } from '@/shared/UI/button/Button'
+import { PlusIcon } from '@/shared/icons/plusIcon/PlusIcon'
+
+import { useTaskStore } from '@/store/useTasksStore'
 
 import cl from './_addTask.module.css'
-import { useTaskStore } from '../../store/useTasksStore'
 
 interface INewTask {
 	setIsActive: (isActive: boolean) => void 
