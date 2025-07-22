@@ -27,7 +27,7 @@ export const TaskItem: FC<ITaskItem> = ({task}) => {
 	const deleteTask = useTaskStore(state => state.deleteTask)
 	
 	return (
-		<Card sx={{backgroundColor: '#000000', color: '#ffffff', width: '300px', borderRadius: 4}}>
+		<Card sx={{backgroundColor: '#000000', color: '#ffffff', width: '100%', minHeight: '150px', borderRadius: 4}}>
 			<Link to = {`/task/${task.id}`} className={cl.link}>
 				<CardContent>
 					<Stack direction = 'row' justifyContent='space-between' mb={2}>

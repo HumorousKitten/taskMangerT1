@@ -28,12 +28,12 @@ export const TaskList: FC<ITaskListProps> = ({ filters }) => {
   return (
     <Grid container spacing={2} justifyContent="center">
       {filteredTasks.map((item) => (
-        <Grid key={item.id}>
+        <Grid key={item.id} size={{xs: 12, sm: 6, md: 4, lg: 3}}>
           <TaskItem task={item} />
         </Grid>
       ))}
 
-      <Grid>
+      <Grid size={{xs: 12, sm: 6, md: 4, lg: 3}}>
         <AddTask />
       </Grid>
     </Grid>

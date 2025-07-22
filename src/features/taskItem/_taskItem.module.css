@@ -3,6 +3,7 @@
   text-overflow: ellipsis;
   white-space: nowrap;
 	width: 50%;
+	min-height: 30px;
 }
 
 .link {
