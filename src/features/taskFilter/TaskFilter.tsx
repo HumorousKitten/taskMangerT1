@@ -3,7 +3,7 @@ import React from 'react';
 
 const categories = ['Bug', 'Feature', 'Documentation', 'Refactor', 'Test', ''];
 const priorities = ['Low', 'Medium', 'High', ''];
-const statuses = ['To Do', 'In Progress', 'Done', ''];
+const statuses = ['ToDo', 'InProgress', 'Done', ''];
 
 interface FilterValues {
   category: string;

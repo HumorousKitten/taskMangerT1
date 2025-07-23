@@ -13,7 +13,8 @@ interface Filters {
 
 interface IUseTaskStore {
 	tasks: ITask[]
-	addTask: (title: string) => void
+	setTasks: (tasks: ITask[]) => void
+	addTask: (task: ITask) => void
 	getTaskById: (id: number) => ITask | undefined
 	updateTask: (task: ITask) => void
 	deleteTask: (id: number) => void
@@ -27,21 +28,24 @@ export const useTaskStore = create<IUseTaskStore>()(
 		immer((set, get) => ({
 			tasks: [],
 
-			addTask: title => set(state => {
-				const newId = !state.tasks.length ? 1 : state.tasks[state.tasks.length - 1].id + 1
-				state.tasks.push({id: newId, title, status: 'To Do', category: '', priority: '', description: ''})
+			setTasks: (tasks) => set(state => {
+				state.tasks = tasks
 			}),
 
-			getTaskById: id => get().tasks.find((item) => item.id === id),
+			addTask: task => set(state => {
+				state.tasks.push(task)
+			}),
+
+			getTaskById: id => get().tasks.find((item) => item.task_id === id),
 
 			updateTask: task => set(state => {
-				const oldTask = state.tasks.find((item) => item.id === task.id)
+				const oldTask = state.tasks.find((item) => item.task_id === task.task_id)
 				if(!oldTask) return
 				Object.assign(oldTask, task);
 			}),
 
 			deleteTask: id => set(state => {
-				state.tasks = state.tasks.filter(item => item.id !== id)
+				state.tasks = state.tasks.filter(item => item.task_id !== id)
 			}),
 
 			filterTasks: (filters: Filters): ITask[] => {
