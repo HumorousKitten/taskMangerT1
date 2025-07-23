@@ -25,6 +25,8 @@ import { ITask } from '@/shared/types/types'
 
 import { useTaskStore } from '@/store/useTasksStore'
 
+import { updateTask } from './api/updateTask';
+import { getTaskById } from './api/getTaskById';
 
 type Status = ITask['status'];
 type Priority = ITask['priority'];
@@ -43,7 +45,7 @@ const style = {
 };
 
 const options: Record<FieldType, string[]> = {
-  status: ['To Do', 'In Progress', 'Done'],
+  status: ['ToDo', 'InProgress', 'Done'],
   priority: ['Low', 'Medium', 'High'],
   category: ['Bug', 'Feature', 'Documentation', 'Refactor', 'Test'],
 };
@@ -80,6 +82,7 @@ const ChildModal = ({
               colorMap[title][val as keyof ColorMap[typeof title]]
             }
             onClick={() => {
+              console.log(val)
               onSelect(val);
               onClose();
             }}
@@ -98,17 +101,16 @@ const ChildModal = ({
 
 
 export const TaskDetails = () => {
-  const getTaskById = useTaskStore(state => state.getTaskById)
-  const updateTask = useTaskStore(state => state.updateTask)
   const navigate = useNavigate()
-  const { id } = useParams()
+  const {id} = useParams()
 
-  const [taskDetails, updateTaskDetails] = useImmer<Omit<ITask, 'id'>>({
+
+  const [taskDetails, updateTaskDetails] = useImmer<Omit<ITask, 'task_id' | 'createdAt'>>({
     title: '',
-    description: '',
-    status: '',
+    description: null,
+    status: 'ToDo',
     priority: '',
-    category: ''
+    category: '',
   })
 
   const [editTitle, setEditTitle] = useState(false);
@@ -117,26 +119,28 @@ export const TaskDetails = () => {
 
   React.useEffect(() => {
     if(!id) return
-    const task = getTaskById(+id)
-    if(!task) return
-    updateTaskDetails((draft) => {
-      draft.title = task.title
-      draft.category = task.category
-      draft.priority = task.priority
-      draft.status = task.status
-      draft.description = task.description
-    })
+    const taskData = async () => {
+      const task = await getTaskById(+id)
+      if(!task) return
+      updateTaskDetails((draft) => {
+        draft.title = task.title
+        draft.category = task.category
+        draft.priority = task.priority
+        draft.status = task.status
+        draft.description = task.description
+      })
+    }
+    
+    taskData()
   }, [])
 
   const handleClose = () => navigate(-1);
 
-  const handleEdit = () => {
+  const handleEdit = async () => {
     if(!id) return
-    const newTask = {
-      id: +id,
-      ...taskDetails
-    }
-    updateTask(newTask)
+
+    await updateTask(+id, taskDetails)
+
     handleClose()
   }
 
@@ -163,18 +167,18 @@ export const TaskDetails = () => {
           <Stack direction="row" spacing={1} mb={2}>
             <Chip
               label={`Статус: ${taskDetails.status}`}
-              color={colorMap.status[taskDetails.status || 'To Do']}
+              color={colorMap.status[taskDetails.status || 'ToDo']}
               onClick={() => setOpenChildModal('status')}
               sx={{ cursor: 'pointer' }}
             />
             <Chip
-              label={`Приоритет: ${taskDetails.priority}`}
+              label={`Приоритет: ${taskDetails.priority ? taskDetails.priority : ''}`}
               color={taskDetails.priority ? colorMap.priority[taskDetails.priority] : undefined}
               onClick={() => setOpenChildModal('priority')}
               sx={{ cursor: 'pointer' }}
             />
             <Chip
-              label={`Категория: ${taskDetails.category}`}
+              label={`Категория: ${taskDetails.category ? taskDetails.category : ''}`}
               color={taskDetails.category ? colorMap.category[taskDetails.category] : undefined}
               onClick={() => setOpenChildModal('category')}
               sx={{ cursor: 'pointer' }}
@@ -221,8 +225,8 @@ export const TaskDetails = () => {
             openChildModal === 'status'
               ? taskDetails.status
               : openChildModal === 'priority'
-              ? taskDetails.priority
-              : taskDetails.category
+              ? taskDetails.priority ? taskDetails.priority : '' 
+              : taskDetails.category ? taskDetails.category : ''
           }
           onSelect={(val) => {
             if (openChildModal === 'status') updateTaskDetails(draft => {

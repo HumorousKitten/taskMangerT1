@@ -1,6 +1,6 @@
 import React, { FC } from 'react'
 
-import { Box, Stack, TextField } from '@mui/material'
+import { Stack, TextField } from '@mui/material'
 
 import { CustomButton } from '@/shared/UI/button/Button'
 import { PlusIcon } from '@/shared/icons/plusIcon/PlusIcon'
@@ -8,6 +8,7 @@ import { PlusIcon } from '@/shared/icons/plusIcon/PlusIcon'
 import { useTaskStore } from '@/store/useTasksStore'
 
 import cl from './_addTask.module.css'
+import { createTaskQuery } from './api/createTask'
 
 interface INewTask {
 	setIsActive: (isActive: boolean) => void 
@@ -21,9 +22,12 @@ const NewTask: FC<INewTask> = ({setIsActive}) => {
 		setTitle(e.currentTarget.value)
 	}
 
-	function newTask() {
+	async function newTask() {
 		if(!title) return
-		addTask(title)
+
+		const createdTask = await createTaskQuery({title, status: 'ToDo'})
+		console.log(createdTask)
+		addTask(createdTask)
 		setIsActive(false)
 	}
 

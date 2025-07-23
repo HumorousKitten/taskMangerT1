@@ -1,7 +1,7 @@
 export const colorMap = {
   status: {
-    'To Do': 'secondary',
-    'In Progress': 'info',
+    'ToDo': 'secondary',
+    'InProgress': 'info',
     Done: 'success',
   },
   priority: {

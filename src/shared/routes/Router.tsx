@@ -14,4 +14,6 @@ export const router = createBrowserRouter([
 		path: 'task/:id',
 		element: <TaskDetails />,
 	},
-])
+], {
+	basename: '/taskMangerT1'
+})
